@@ -1,64 +1,104 @@
-let precioDelProducto
-let cantCuotas
-let opcion
-let ivaDelProducto
-
 const productos = [
-    {
-        id: 1,
-        nombre: "Remera",
-        precio: 3500,
-        iva: 1.21
-    },
-    {   
-        id: 2,
-        nombre: "Pantalon",
-        precio: 6000,
-        iva: 1.41
-    },
-    {   
-        id: 3,
-        nombre: "Buzo",
-        precio: 6800,
-        iva: 1.61
-    },
-]
+  {
+    id: 1,
+    nombre: "Remera",
+    precio: 3500,
+    iva: 1.21,
+  },
+  {
+    id: 2,
+    nombre: "Pantalon",
+    precio: 6000,
+    iva: 1.41,
+  },
+  {
+    id: 3,
+    nombre: "Buzo",
+    precio: 6800,
+    iva: 1.61,
+  },
+];
 
-while(true){
-    // opcion = parseInt(prompt("Ingresa el producto que desea comprar " + productos.forEach(producto => `${producto.id} ${producto.nombre}`)));
-    opcion = parseInt(prompt("Ingresa el producto que desea comprar: \n1: Remera \n2: Pantalón \n3: Buzo"));
-    if(opcion <= productos.length && opcion > 0 && opcion != ""){
-        let productosFiltrados = productos.filter(producto => producto.id == opcion)
-        let productoSeleccionado = productosFiltrados[0]
-        precioDelProducto = productoSeleccionado.precio
-        ivaDelProducto = productoSeleccionado.iva
-        break;
-    }else{
-        alert("Ingresá una opción correcta");
-        continue
-    }
-}
+// opcion = parseInt(prompt("Ingresa el producto que desea comprar " + productos.forEach(producto => `${producto.id} ${producto.nombre}`)));
 
-while(true){
-    cantCuotas = prompt("Ingrese las cuotas en las que desea pagar su producto")    
-    if(isNaN(cantCuotas) || cantCuotas == null || cantCuotas== 0 || cantCuotas == "" || cantCuotas > 12){
-        alert("Ingrese una cantidad de cuotas válida")
-        continue
-    }else{
-        break;
-    }
-}
+const btnCalcular = document.getElementById("btnCalcular");
+const formulario = document.getElementById("formulario")
+formulario.addEventListener("submit", calcularCuotas)
 
-//función que calcula las cuotas
-function calcularCuotas (precio, cantCuotas){
-    return precio / cantCuotas;
-}
+const btnComprar = document.getElementById("btnComprar");
+btnComprar.addEventListener("click", comprarProducto)
 
-//se llama a la función y se guarda en una variable
-let valorCuota = calcularCuotas(precioDelProducto, cantCuotas)
+const productoSeleccionado = document.getElementById("inputPrenda")
+const cantidadCuotas = document.getElementById("inputCuotas")
+const tituloCompras = document.getElementById("mostrarCompras")
+const textoCompras = document.getElementById("productoCompra")
+const textoCuotas = document.getElementById("cuotasCompra")
 
 //declaramos funcion flecha para sumarle el iva a las cuotas
-const cuotaConIva = valorCuota => valorCuota * ivaDelProducto
+const precioConIva = (precioProducto, ivaProducto) => precioProducto * ivaProducto;
 
-//escribe el precio de la cuota + iva
-document.write("<p>El total a pagar son " + cantCuotas + " cuotas de " + cuotaConIva(valorCuota) + "</p>")
+//función que calcula las cuotas
+function calcularCuotas(event) {
+  event.preventDefault()
+  let productosFiltrados = productos.filter(
+    (producto) => producto.nombre == productoSeleccionado.value
+  );
+  let productoFiltrado = productosFiltrados[0];
+  let precio = productoFiltrado.precio
+  let iva = productoFiltrado.iva
+  let precioFinal = precioConIva(precio,iva)
+  let total = precioFinal / parseInt(cantidadCuotas.value)
+  let seleccionado = document.getElementById("productoSeleccionado")
+  seleccionado.innerHTML = `Seleccionaste el producto ${productoFiltrado.nombre}`
+  let resultado = document.getElementById("resultado")
+  resultado.innerHTML = `Vas a pagar ${cantidadCuotas.value} cuotas de ${total}`
+  mostrarBoton()
+}
+
+//función que guarda la compra
+function comprarProducto () {
+  let misComprasLocal = localStorage.getItem("Compras")
+  let misCompras = JSON.parse(misComprasLocal)
+  
+  if(misCompras == null){
+    misCompras = []
+  }
+
+  const today = new Date();
+const yyyy = today.getFullYear();
+let mm = today.getMonth() + 1;
+let dd = today.getDate();
+
+if (dd < 10) dd = '0' + dd;
+if (mm < 10) mm = '0' + mm;
+
+const formattedToday = dd + '/' + mm + '/' + yyyy;
+
+  let compra = {
+    fecha: formattedToday,
+    producto: productoSeleccionado.value, 
+    cuotas: cantidadCuotas.value
+  }
+  misCompras.push(compra)
+  localStorage.setItem("Compras", JSON.stringify(misCompras))
+}
+
+(function verMisCompras (){
+  let misCompras = localStorage.getItem("Compras")
+  let compras = JSON.parse(misCompras)
+  if(misCompras != null){
+  mostrarCompras()
+  compras.forEach(element => {
+    document.write(`<p>${element.fecha}</p>`)
+    document.write(`<p>Compraste el producto: ${element.producto}</p>`)
+    document.write(`<p>En: ${element.cuotas} cuotas</p>`)
+  });
+}})();
+
+function mostrarBoton () {
+  btnComprar.style.display = 'inline';
+}
+
+function mostrarCompras () {
+  tituloCompras.style.display = 'inline';
+}
