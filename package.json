@@ -1,0 +1,24 @@
+{
+  "name": "primer-entrega-javascript",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "primerEntrega.js",
+  "dependencies": {
+    "animejs": "^3.2.1",
+    "sweetalert": "^2.1.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AgusLoureiro/JavaScript.git"
+  },
+  "author": "Agustin Loureiro",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AgusLoureiro/JavaScript/issues"
+  },
+  "homepage": "https://github.com/AgusLoureiro/JavaScript#readme"
+}
